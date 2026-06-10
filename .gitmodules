@@ -1,0 +1,6 @@
+[submodule "VesperaOS"]
+	path = VesperaOS
+	url = git@github.com:linusgenz/VesperaOS.git
+[submodule "VesperaApps"]
+	path = VesperaApps
+	url = git@github.com:linusgenz/VesperaApps.git
