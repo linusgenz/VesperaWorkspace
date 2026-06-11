@@ -183,7 +183,7 @@ set(KERNEL_ELF  "${OS_BUILD_DIR}/kernel/kernel.elf")
 
 # ── Kernel ──────────────────────────────────────────────────────
 add_custom_target(build-kernel
-        COMMAND ${_build_os} --target build-kernel
+        COMMAND ${_build_os} --target os-build-kernel
         COMMENT "Building kernel.elf"
 )
 
@@ -201,7 +201,7 @@ add_custom_target(build-apps
 
 # ── Full build: kernel + libs + apps  (no disk image) ───────────
 add_custom_target(build
-        COMMAND ${_build_os}   --target build-kernel
+        COMMAND ${_build_os}   --target os-build-kernel
         COMMAND ${_build_os}   --target sysroot_install
         COMMAND ${_build_apps} --target install_apps
         COMMENT "Full build: kernel + libs + apps (no disk image)"
@@ -226,7 +226,7 @@ add_custom_target(pack
 
 # disk-image — full pipeline: build everything, then pack.
 add_custom_target(disk-image
-        COMMAND ${_build_os}   --target build-kernel
+        COMMAND ${_build_os}   --target os-build-kernel
         COMMAND ${_build_os}   --target sysroot_install
         COMMAND ${_build_apps} --target install_apps
         COMMAND bash ${SCRIPTS_DIR}/make_disk.sh
@@ -246,7 +246,7 @@ add_custom_target(disk-image
 
 # update-kernel — rebuild kernel, splice into EFI partition.
 add_custom_target(update-kernel
-        COMMAND ${_build_os} --target build-kernel
+        COMMAND ${_build_os} --target os-build-kernel
         COMMAND bash ${SCRIPTS_DIR}/update_kernel.sh
         ${BOOT_IMG}
         ${KERNEL_ELF}
@@ -449,3 +449,7 @@ message(STATUS "  -DVESPERA_COMPILER=gcc        switch to GCC kernel build")
 message(STATUS "  -DVESPERA_BUILD_TESTS=ON      include test build")
 message(STATUS "  -DVESPERA_SYSROOT=/path/...   custom sysroot location")
 message(STATUS "")
+
+
+add_subdirectory(VesperaOS)
+add_subdirectory(VesperaApps)
