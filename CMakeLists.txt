@@ -21,7 +21,7 @@ set(SCRIPTS_DIR     "${ENV_DIR}/scripts")
 set(OVMF_DIR        "${ENV_DIR}/OVMF")
 
 # Sub-build dirs live inside the umbrella build tree so a single
-# `rm -rf build/` wipes everything.
+# `rm -rf cmake-build-debug/` wipes everything.
 set(OS_BUILD_DIR   "${CMAKE_CURRENT_BINARY_DIR}/VesperaOS")
 set(APPS_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/VesperaApps")
 
@@ -195,7 +195,7 @@ add_custom_target(build-libs
 
 # ── Applications (VesperaApps → sysroot/bin) ────────────────────
 add_custom_target(build-apps
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMENT "Building VesperaApps → sysroot/bin"
 )
 
@@ -203,7 +203,7 @@ add_custom_target(build-apps
 add_custom_target(build
         COMMAND ${_build_os}   --target build-kernel
         COMMAND ${_build_os}   --target sysroot_install
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMENT "Full build: kernel + libs + apps (no disk image)"
 )
 
@@ -228,7 +228,7 @@ add_custom_target(pack
 add_custom_target(disk-image
         COMMAND ${_build_os}   --target build-kernel
         COMMAND ${_build_os}   --target sysroot_install
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMAND bash ${SCRIPTS_DIR}/make_disk.sh
         ${BOOT_IMG}
         ${LIMINE_DIR}
@@ -255,7 +255,7 @@ add_custom_target(update-kernel
 
 # update-rootfs — rebuild apps, rsync into rootfs partition.
 add_custom_target(update-rootfs
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMAND bash ${SCRIPTS_DIR}/update_rootfs.sh
         ${BOOT_IMG}
         ${VESPERA_SYSROOT}
@@ -322,7 +322,7 @@ add_custom_target(run
 # run-quick — rebuild apps + update rootfs + run.  Typical dev loop.
 add_custom_target(run-quick
         DEPENDS test_disk_image
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMAND bash ${SCRIPTS_DIR}/update_rootfs.sh
         ${BOOT_IMG}
         ${VESPERA_SYSROOT}
@@ -337,7 +337,7 @@ add_custom_target(run-full
         DEPENDS test_disk_image
         COMMAND ${_build_os}   --target build-kernel
         COMMAND ${_build_os}   --target sysroot_install
-        COMMAND ${_build_apps} --target apps
+        COMMAND ${_build_apps} --target install_apps
         COMMAND bash ${SCRIPTS_DIR}/make_disk.sh
         ${BOOT_IMG}
         ${LIMINE_DIR}
@@ -399,6 +399,7 @@ endif()
 # ════════════════════════════════════════════════════════════════
 add_custom_target(clean-all
         COMMAND ${CMAKE_COMMAND} -E rm -rf
+        ${CMAKE_CURRENT_BINARY_DIR}/boot.img
         ${OS_BUILD_DIR}
         ${APPS_BUILD_DIR}
         ${TESTS_BUILD_DIR}

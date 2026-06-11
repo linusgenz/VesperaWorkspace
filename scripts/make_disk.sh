@@ -77,6 +77,7 @@ sudo cp -r "$SYSROOT_DIR/mnt"     "$ROOT_MNT/"
 sudo cp -r "$SYSROOT_DIR/var"     "$ROOT_MNT/"
 sudo cp -r "$SYSROOT_DIR/root"     "$ROOT_MNT/"
 sudo cp -r "$SYSROOT_DIR/home"     "$ROOT_MNT/"
+sudo cp -r "$SYSROOT_DIR/usr"     "$ROOT_MNT/"
 
 if [ -f "$ROOT_MNT/bin/su" ]; then
     echo "[make_disk] Setting setuid bit on /bin/su"
